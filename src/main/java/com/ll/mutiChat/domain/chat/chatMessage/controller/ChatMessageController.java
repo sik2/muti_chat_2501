@@ -22,7 +22,7 @@ public class ChatMessageController {
                                @RequestBody HashMap message) {
 
         System.out.println("roomId = " + roomId);
-        boolean result = chatMessageService.writeMessage(roomId, message);
+        boolean result = chatMessageService.writeMessage(roomId, message);  // 메시지 작성 성공여부 확인
 
         if (result) {
             return RsData.of("S-1", "채팅 메시지 작성 완료");

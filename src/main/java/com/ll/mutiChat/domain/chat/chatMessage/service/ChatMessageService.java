@@ -20,6 +20,7 @@ public class ChatMessageService {
 
     // 메시지 작성
     public boolean writeMessage(long roomId, HashMap message) {
+        logger.info("메시지 작성");
         // 메시지 작성자 이름
         String writerName = (String) message.get("writerName");
         // 메시지 내용
@@ -37,8 +38,13 @@ public class ChatMessageService {
                 .build();
 
         // 메시지 저장
-        chatMessageRepository.save(chatMessage);
-
-        return true;
+        try {
+            logger.info("메시지 작성 완료");
+            chatMessageRepository.save(chatMessage);
+            return true;
+        } catch (Exception e) {
+            logger.warning("메시지 작성 중 오류 발생");
+            return false;
+        }
     }
 }

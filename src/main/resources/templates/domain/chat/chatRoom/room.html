@@ -27,8 +27,8 @@
 </div>
 
 <script th:inline="javascript">
-  const roomId = /*[[${roomId}]]*/ 0;
-  let lastChatMessageId = /*[[${room.chatMessages.size > 0 ? room.chatMessages.first.id : 0}]]*/ 0;
+  const roomId = [[${roomId}]] ;
+  let lastChatMessageId = [[${room.chatMessages.size > 0 ? room.chatMessages.last.id : 0}]];
 </script>
 
 <script>

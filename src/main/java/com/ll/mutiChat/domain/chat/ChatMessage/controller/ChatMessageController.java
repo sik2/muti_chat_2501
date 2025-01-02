@@ -10,4 +10,8 @@ public class ChatMessageController {
 
     private final ChatMessageService chatMessageService;
 
+    public void test() {
+        System.out.println("new branch test");
+    }
+
 }

@@ -15,7 +15,7 @@ public class ChatRoomController {
     @ResponseBody
     public String showRoom(@PathVariable long roomId, @RequestParam(defaultValue = "NoName") String writerName) {
 
-        return String.format("%d 번 채팅방 입니다. writer : %s", roomId, writerName);
+        return String.format("%d 번 채팅방 입니다! writer : %s", roomId, writerName);
     }
 
     @GetMapping("/make")

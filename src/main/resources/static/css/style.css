@@ -1,0 +1,153 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100vh;
+    background-color: #f0f2f5;
+}
+
+.container {
+    text-align: center;
+    margin-top: 40px;
+    width: 100%;
+    max-width: 800px;
+}
+
+.room-info {
+    margin-bottom: 30px;
+}
+
+h1, h2 {
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.chat-form {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.chat-form input {
+    margin-right: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.chat-form button {
+    padding: 10px 20px;
+    font-size: 14px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    width: 80%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+li {
+    background-color: #ffffff;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+li:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.room-form {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.room-form input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    width: 300px;
+    margin-right: 10px;
+}
+
+.room-form button {
+    padding: 10px 20px;
+    font-size: 14px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.room-form button:hover {
+    background-color: #45a049;
+}
+
+.room-form select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-right: 10px;  /* select와 버튼 사이 간격 추가 */
+}
+
+.room-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.room-table th,
+.room-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+
+.room-table th {
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.room-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.room-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.room-table button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    background-color: #4caf50;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.room-table button:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);  /* 버튼이 위로 살짝 올라가는 효과 */
+}
+
+.room-table button:active {
+    transform: translateY(1px);  /* 클릭 시 버튼이 눌리는 효과 */
+}

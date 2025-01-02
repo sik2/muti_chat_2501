@@ -1,33 +1,39 @@
 server:
-  port: 8090
+  port: 8090    # 서버가 실행될 포트 번호 지정
+
 spring:
   thymeleaf:
-    cache: false
-    prefix: file:src/main/resources/templates/
+    cache: false    # 개발 환경에서 템플릿 캐시 비활성화 (실시간 변경 반영)
+    prefix: file:src/main/resources/templates/    # 템플릿 파일 위치 지정, file: 접두사로 실시간 반영
   output:
     ansi:
-      enabled: always
+      enabled: always    # 콘솔 출력시 ANSI 색상 활성화
+
   h2:
     console:
-      enabled: true
-      path: /h2-console
+      enabled: true     # H2 데이터베이스 웹 콘솔 활성화
+      path: /h2-console # H2 콘솔 접속 경로 설정
+
   datasource:
-    url: jdbc:h2:mem:chat_dev;MODE=MYSQL
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:chat_dev      # 메모리 DB 사용, DB 이름은 chat_dev
+    username: sa                    # 데이터베이스 접속 아이디
+    password:                       # 데이터베이스 접속 비밀번호 (기본값 없음)
+    driver-class-name: org.h2.Driver # H2 데이터베이스 드라이버 설정
+
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create    # 애플리케이션 시작시 테이블 새로 생성 (개발환경용)
+
     properties:
       hibernate:
-        default_batch_fetch_size: 100
-        format_sql: true
-        highlight_sql: true
-        use_sql_comments: true
+        default_batch_fetch_size: 100  # N+1 문제 해결을 위한 배치 사이즈 설정
+        format_sql: true               # SQL 쿼리 포맷팅
+        highlight_sql: true            # SQL 쿼리 하이라이팅
+        use_sql_comments: true         # SQL 쿼리에 주석 포함
+
 logging:
   level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.orm.jdbc.bind: TRACE
-    org.hibernate.orm.jdbc.extract: TRACE
-    org.springframework.transaction.interceptor: TRACE
+    org.hibernate.SQL: DEBUG                        # SQL 쿼리 로깅
+    org.hibernate.orm.jdbc.bind: TRACE             # SQL 바인딩 파라미터 로깅
+    org.hibernate.orm.jdbc.extract: TRACE          # SQL 결과 추출 로깅
+    org.springframework.transaction.interceptor: TRACE  # 트랜잭션 로깅

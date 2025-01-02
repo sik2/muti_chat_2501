@@ -23,4 +23,6 @@ public class ChatRoomController {
         return "domain/chat/chatRoom/make";
     }
 
+    //추가 예정
+
 }

@@ -25,7 +25,7 @@ public class ChatMessageService {
         chatMessageRepository.save(chatMessage);
     }
 
-    public List<ChatMessage> findMessagesAfter(long roomId, long lastMessageId) {
-        return chatMessageRepository.findByChatRoomIdAndIdGreaterThan(roomId, lastMessageId);
+    public List<ChatMessage> findMessagesAfter(long roomId, long afterId) {
+        return chatMessageRepository.findByChatRoomIdAndIdGreaterThan(roomId, afterId);
     }
 }

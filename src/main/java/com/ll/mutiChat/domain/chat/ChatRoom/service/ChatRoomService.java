@@ -1,5 +1,6 @@
 package com.ll.mutiChat.domain.chat.ChatRoom.service;
 
+import com.ll.mutiChat.domain.chat.ChatMessage.entity.ChatMessage;
 import com.ll.mutiChat.domain.chat.ChatRoom.entity.ChatRoom;
 import com.ll.mutiChat.domain.chat.ChatRoom.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,5 +23,13 @@ public class ChatRoomService {
                 .build();
 
         chatRoomRepository.save(chatRoom);
+    }
+
+    public ChatRoom findById(long roomId){
+        return chatRoomRepository.findById(roomId).orElseThrow();
+    }
+
+    public List<ChatMessage> findMessageByRoomId(long roomId){
+        return chatRoomRepository.findById(roomId).orElseThrow().getChatMessages();
     }
 }

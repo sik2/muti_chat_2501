@@ -34,9 +34,12 @@ public class ChatRoomController {
     }
 
     @GetMapping("/{roomId}")
-    @ResponseBody
-    public String showRoom(@PathVariable long roomId, @RequestParam(defaultValue = "NoName") String writerName) {
-        return String.format("%d 번 채팅방 입니다. writer : %s", roomId, writerName);
+    public String showRoom(@PathVariable long roomId,
+                           @RequestParam(defaultValue = "NoName") String writerName, Model model) {
+        model.addAttribute("roomId", roomId);
+        model.addAttribute("room", chatRoomService.findById(roomId));
+
+        return "domain/chat/chatRoom/room";
     }
 
     //@PostMapping("/{roomId}/make")

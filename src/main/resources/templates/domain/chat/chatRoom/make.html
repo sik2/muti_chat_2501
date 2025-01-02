@@ -1,14 +1,18 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
 <h1>채팅방 생성</h1>
 
 <nav>
   <a href="list">채팅방 목록</a>
 </nav>
 
-<form method="POST">
+<form role="form" th:object="${chatRoomDto}" method="post">
   <div>
-    <input type="text" name="name" placeholder="이름" required>
+    <input type="text" th:field="*{name}" name="name" placeholder="이름" required>
   </div>
   <div>
-    <input type="submit" value="채팅방 생성">
+    <button th:formaction="@{/chat/room/make}" type="submit">채팅방 생성</button>
   </div>
 </form>

@@ -1,41 +1,24 @@
-<h1>1번 채팅방</h1>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
 
 <nav>
-  <a href="make">채팅방 생성</a>
-  <a href="list">채팅방 목록</a>
+  <a href="/chat/room/make">채팅방 생성</a>
+  <a href="/chat/room/list">채팅방 목록</a>
 </nav>
 
-<form onsubmit="submitWriteForm(this); return false;" method="POST">
-  <input autocomplete="off" type="text" name="writerName" placeholder="작성자 명">
-  <input autocomplete="off" type="text" name="content" placeholder="내용">
-  <input type="submit" value="작성">
+<form th:object="${chatMessageDto}" method="POST">
+  <input th:field="*{writerName}" autocomplete="off" type="text" name="writerName" placeholder="작성자 명">
+  <input th:field="*{content}" autocomplete="off" type="text" name="content" placeholder="내용">
+  <button type="submit" th:formaction="@{'/chat/room/' + ${roomId} +'/write'}">작성</button>
 </form>
 
 <div>
   <ul class="chat__messages">
-    <li>
-      <span>홍길동</span>
-      :
-      (
-      <span>3</span>
-      )
-      <span>안녕하세요.</span>
-    </li>
-    <li>
-      <span>김영희</span>
-      :
-      (
-      <span>2</span>
-      )
-      <span>반가워요.</span>
-    </li>
-    <li>
-      <span>김철수</span>
-      :
-      (
-      <span>1</span>
-      )
-      <span>안녕하세요.</span>
+    <li th:each="chatMessage : ${chatMessages}">
+      <span th:text="${chatMessage.writerName}"></span>
+      <span th:text="${chatMessage.content}"></span>
+      <div></div>
     </li>
   </ul>
 </div>

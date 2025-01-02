@@ -35,7 +35,7 @@
   function submitWriteForm(form) {
     form.writerName.value = form.writerName.value.trim();
 
-    if ( form.writerName.value.length == 0 ) {
+    if (form.writerName.value.length == 0) {
       alert('작성자 명을 입력해주세요.');
       form.writerName.focus();
       return;
@@ -43,7 +43,7 @@
 
     form.content.value = form.content.value.trim();
 
-    if ( form.content.value.length == 0 ) {
+    if (form.content.value.length == 0) {
       alert('내용을 입력해주세요.');
       form.content.focus();
       return;

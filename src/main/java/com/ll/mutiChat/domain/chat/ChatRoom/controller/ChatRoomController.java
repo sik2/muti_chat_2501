@@ -1,19 +1,24 @@
 package com.ll.mutiChat.domain.chat.ChatRoom.controller;
 
+import com.ll.mutiChat.domain.chat.ChatMessage.entity.ChatMessage;
+import com.ll.mutiChat.domain.chat.ChatMessage.service.ChatMessageService;
 import com.ll.mutiChat.domain.chat.ChatRoom.entity.ChatRoom;
 import com.ll.mutiChat.domain.chat.ChatRoom.service.ChatRoomService;
+import com.ll.mutiChat.global.rsData.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/chat/room")
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
+    private final ChatMessageService chatMessageService;
 
     @GetMapping("/list")
     public String listRoom(Model model) {
@@ -42,7 +47,19 @@ public class ChatRoomController {
         return "domain/chat/chatRoom/room";
     }
 
-    //@PostMapping("/{roomId}/make")
+    @PostMapping("/{roomId}/write")
+    @ResponseBody
+    public RsData<Void> writeMessage(@PathVariable long roomId,
+                                     @RequestBody Map<String, String> payload) {
+        String writerName = payload.get("writerName");
+        String content = payload.get("content");
+        chatMessageService.writeMessage(roomId, writerName, content);
+        return RsData.of("S-1", "success");
+    }
 
-    //@GetMapping("/{roomId}/messageAfter/{AfterId}")
+    @GetMapping("/{roomId}/messageAfter/{AfterId}")
+    @ResponseBody
+    public List<ChatMessage> getMessagesAfter(@PathVariable long roomId, @PathVariable long AfterId) {
+        return chatMessageService.findMessagesAfter(roomId, AfterId);
+    }
 }

@@ -24,6 +24,8 @@
 </div>
 
 <script>
+    let lastChatId = 0;
+
     function getRoomIdFromURL() {
         const pathParts = window.location.pathname.split('/');
         const roomId = pathParts[pathParts.length - 1];
@@ -52,6 +54,35 @@
             } else {
                 chatsList.innerHTML = '<li>채팅 목록을 불러오는 데 실패했습니다.</li>';
             }
+
+            lastChatId = data.data.chats.length > 0 ? data.data.chats[data.data.chats.length - 1].id : lastChatId;
+            console.log("lastChatId: ", lastChatId);
+        } catch (error) {
+            console.error('Error fetching chats:', error);
+            chatsList.innerHTML = '<li>채팅 목록을 불러올 수 없습니다.</li>';
+        }
+        document.getElementById('room-id').innerText = roomId;
+    }
+
+    async function fetchNewChats(roomId) {
+        try {
+            const response = await fetch(`/api/v0/rooms/${roomId}/chats?lastChatId=${lastChatId}`);
+            const data = await response.json();
+            const chatsList = document.getElementById('chats-list');
+
+            lastChatId = data.data.chats.length > 0 ? data.data.chats[data.data.chats.length - 1].id : lastChatId;
+            console.log("두번쨰 lastChatId: ", lastChatId);
+            if (data.resultCode === "200") {
+                data.data.chats.forEach(chat => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `<strong>${chat.authorName}</strong>: ${chat.content}`;
+                    chatsList.appendChild(listItem);
+                });
+            } else {
+                chatsList.innerHTML = '<li>채팅 목록을 불러오는 데 실패했습니다.</li>';
+            }
+
+
         } catch (error) {
             console.error('Error fetching chats:', error);
             chatsList.innerHTML = '<li>채팅 목록을 불러올 수 없습니다.</li>';
@@ -64,6 +95,7 @@
         const roomId = document.getElementById('room-id').innerText;
         const authorName = document.getElementById('authorName').value;
         const content = document.getElementById('content').value;
+        const roomType = getRoomTypeFromURL();
 
         await fetch(`/api/v0/rooms/${roomId}/chats`, {
             method: 'POST',
@@ -73,7 +105,9 @@
             body: JSON.stringify({ authorName, content })
         });
 
-        fetchChats(roomId);
+        // if (roomType !== 'sse') {
+        //     fetchNewChats(roomId);
+        // }
 
         // 입력 필드 초기화
         document.getElementById('authorName').value = '';
@@ -85,7 +119,7 @@
     // 1. polling 시작
     function startPolling(roomId) {
         setInterval(() => {
-            fetchChats(roomId);
+            fetchNewChats(roomId);
         }, 500);  // 0.5초마다 채팅 갱신
     }
 
@@ -94,7 +128,7 @@
         sse = new EventSource("/sse/connect");
         console.log("2번방 sse 시작");
         sse.addEventListener('chat__messageAdded', e => {
-            fetchChats(roomId);
+            fetchNewChats(roomId);
         });
     }
 
@@ -107,23 +141,19 @@
             console.log("Connected: " + frame);
 
             stompClient.subscribe(`/topic/chat/writeMessage`, function (data) {
-                const jsonData = JSON.parse(data.body);
-                const chatsList = document.getElementById('chats-list');
-
-                // 새로운 채팅 메시지 추가
-                const listItem = document.createElement('li');
-                listItem.innerHTML = `<strong>${jsonData.authorName}</strong>: ${jsonData.content}`;
-                chatsList.appendChild(listItem);  // 기존 목록에 추가
+                fetchNewChats(roomId);
             });
 
-            // fetch existing chats
-            fetchChats(roomId);
+            // 채팅 메시지 추가 시 fetchNewChats 호출
+            fetchNewChats(roomId);
         });
     }
 
     // 초기 실행
     const roomId = getRoomIdFromURL();
     const roomType = getRoomTypeFromURL();
+    fetchChats(roomId);
+
     console.log("roomType: ", roomType);
     if (roomId) {
         if (roomType === 'polling') {

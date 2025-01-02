@@ -19,10 +19,20 @@ public class RoomController {
         this.roomRepository = roomRepository;
     }
 
+    // 방 목록 조회 (lastRoomId가 있을 때는 이후의 방만, 없을 때는 전체 조회)
     @GetMapping
     @ResponseBody
-    public RsData<RoomListResponse> getAllRooms() {
-        List<Room> rooms = roomRepository.findAll();
+    public RsData<RoomListResponse> getAllRooms(@RequestParam(value = "lastRoomId", required = false) Long lastRoomId) {
+        List<Room> rooms;
+
+        if (lastRoomId == null) {
+            // lastRoomId가 없는 경우 전체 조회
+            rooms = roomRepository.findAll();
+        } else {
+            // lastRoomId 이후의 방만 조회
+            rooms = roomRepository.findRoomsAfterId(lastRoomId);
+        }
+
         return RsData.of("200", "방 리스트 가져오기 성공", new RoomListResponse(rooms));
     }
 

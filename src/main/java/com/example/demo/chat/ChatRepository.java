@@ -13,4 +13,7 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     // roomId와 chatId 기준으로 이후 채팅 조회
     List<Chat> findAllByRoomIdAndIdGreaterThan(Long roomId, Long chatId);
+
+    // 단일 chatId에 해당하는 채팅 조회
+    Chat findByRoomIdAndId(Long roomId, Long chatId);
 }

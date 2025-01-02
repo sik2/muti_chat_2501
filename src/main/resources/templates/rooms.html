@@ -42,6 +42,8 @@
 </div>
 
 <script>
+    let lastRoomId = 0;
+
     // 방 목록 불러오기
     async function fetchRooms() {
         const response = await fetch('/api/v0/rooms');
@@ -59,7 +61,30 @@
             `;
             roomsList.appendChild(row);
         });
+
+        lastRoomId = data.data.rooms[data.data.rooms.length - 1].id;
+
     }
+
+    async function fetchNewRooms(){
+        const response = await fetch(`/api/v0/rooms?lastRoomId=${lastRoomId}`);
+        const data = await response.json();
+        const roomsList = document.getElementById('rooms-list');
+
+        data.data.rooms.forEach(room => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${room.id}</td>
+                <td>${room.name}</td>
+                <td>${room.roomType.toUpperCase()}</td>
+                <td><button onclick="enterRoom(${room.id}, '${room.roomType}')">Enter Room</button></td>
+            `;
+            roomsList.appendChild(row);
+        });
+
+        lastRoomId = data.data.rooms[data.data.rooms.length - 1].id;
+    }
+
 
     // 방 입장 시 해당 roomId 페이지로 이동
     function enterRoom(roomId, roomType) {
@@ -84,7 +109,7 @@
 
         if (response.ok) {
             alert('방이 생성되었습니다.');
-            fetchRooms();  // 방 목록 갱신
+            fetchNewRooms();  // 방 목록 갱신
         } else {
             alert('방 생성에 실패했습니다.');
         }

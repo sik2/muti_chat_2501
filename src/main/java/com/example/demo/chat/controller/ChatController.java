@@ -33,15 +33,28 @@ public class ChatController {
     @ResponseBody
     public RsData<ChatListResponse> getChatList(
             @PathVariable("roomId") Long roomId,
-            @RequestParam(value = "chatId", required = false) Long chatId
+            @RequestParam(value = "chatId", required = false) Long chatId,
+            @RequestParam(value = "lastChatId", required = false) Long lastChatId
     ) {
-        // parameter 로 chatId 없으면 roomId 전체 Chat list 가져오기
-        // parameter 로 chatId 있으면 해당 chatId 이후의 Chat list 가져오기
-        List<Chat> chats;
-        if (chatId == null) {
+
+        List<Chat> chats = null;
+        if (chatId == null && lastChatId == null) {
+            // 아무런 parameter 값이 없을시, roomId에 해당하는 모든 값들가져오기
             chats = chatRepository.findByRoomId(roomId);
-        } else {
-            chats = chatRepository.findAllByRoomIdAndIdGreaterThan(roomId, chatId);
+        }
+        else if(chatId != null) {
+            // RoomId 값이 있고, chatId 값이 있을시, roomId와 chatId에 해당하는 값 가져오기, 하나만 가져오면 된다.
+            Chat tmpChat = chatRepository.findByRoomIdAndId(roomId, chatId);
+            if (tmpChat != null){
+                chats.add(tmpChat);
+            }
+        }
+        else if(lastChatId != null){
+            // RoomId 값이 있고, lastChatId 값이 있을시, roomId와 lastChatId 이후의 값들 가져오기
+            chats = chatRepository.findAllByRoomIdAndIdGreaterThan(roomId, lastChatId);
+        }
+        else {
+            throw new IllegalArgumentException("잘못된 파라미터 입니다.");
         }
 
         return RsData.of("200", "채팅 리스트 가져오기 성공", new ChatListResponse(chats));

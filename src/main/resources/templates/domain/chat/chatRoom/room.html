@@ -1,8 +1,8 @@
-<h1>1번 채팅방</h1>
+<h1 th:text="|${roomId}번 ${chatRoomName}|">1번 채팅방</h1>
 
 <nav>
-  <a href="make">채팅방 생성</a>
-  <a href="list">채팅방 목록</a>
+  <a href="/chat/room/make">채팅방 생성</a>
+  <a href="/chat/room/list">채팅방 목록</a>
 </nav>
 
 <form onsubmit="submitWriteForm(this); return false;" method="POST">

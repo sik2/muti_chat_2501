@@ -23,4 +23,5 @@ public class ChatRoom extends BaseEntity {
 
     @OneToMany
     private List<ChatMessage> chatMessages;
+
 }

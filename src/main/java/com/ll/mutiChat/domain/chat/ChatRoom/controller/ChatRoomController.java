@@ -18,15 +18,15 @@ public class ChatRoomController {
     @GetMapping("list")
     public String list(Model model){
         model.addAttribute("chatRooms",chatRoomService.findAll());
-        System.out.println(chatRoomService.findAll());
         return "domain/chat/chatRoom/list";
     }
 
     @GetMapping("{roomId}")
-    @ResponseBody
-    public String showRoom(@PathVariable long roomId, @RequestParam(defaultValue = "NoName") String writerName) {
-
-        return String.format("%d 번 채팅방 입니다. writer : %s", roomId, writerName);
+    public String showRoom(
+        @PathVariable long roomId,
+        Model model) {
+        model.addAttribute("chatRoom", chatRoomService.findById(roomId));
+        return "domain/chat/chatRoom/room";
     }
 
     @GetMapping("make")

@@ -21,4 +21,9 @@ public class ChatRoomService {
             .name(name)
             .build());
     }
+
+    public ChatRoom findById(long roomId) {
+        return chatRoomRepository.findById(roomId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
+    }
 }

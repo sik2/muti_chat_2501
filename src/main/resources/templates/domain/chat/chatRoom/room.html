@@ -1,41 +1,113 @@
-<h1>1번 채팅방</h1>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+<h1 th:text="${chatRoom.id} + '번 채팅방'">1번 채팅방</h1>
 
 <nav>
   <a href="make">채팅방 생성</a>
   <a href="list">채팅방 목록</a>
 </nav>
 
-<form onsubmit="submitWriteForm(this); return false;" method="POST">
-  <input autocomplete="off" type="text" name="writerName" placeholder="작성자 명">
-  <input autocomplete="off" type="text" name="content" placeholder="내용">
-  <input type="submit" value="작성">
-</form>
+<div class="chat">
+  <!-- 메시지 작성 폼 -->
+  <!-- 폼 제출 시 Chat__writeMessage 함수 호출, 기본 제출 동작 방지 -->
+  <form
+          class="chat__write-message"
+          onsubmit="Chat__writeMessage(this); return false;"
+  >
+    <input type="text" placeholder="작성자" name="authorName" />
+    <!-- 작성자 입력 필드 -->
+    <input type="text" placeholder="내용을 입력해주세요." name="content" />
+    <!-- 메시지 내용 입력 필드 -->
+    <input type="submit" value="작성" />
+    <!-- 제출 버튼 -->
+  </form>
+  <!-- 메시지 표시 영역 -->
+  <div class="chat__message-box">
+    <ul class="chat__message-ul"></ul>
+    <!-- 메시지들이 표시될 리스트 -->
+  </div>
+</div>
 
 <div>
-  <ul class="chat__messages">
-    <li>
-      <span>홍길동</span>
-      :
-      (
-      <span>3</span>
-      )
-      <span>안녕하세요.</span>
-    </li>
-    <li>
-      <span>김영희</span>
-      :
-      (
-      <span>2</span>
-      )
-      <span>반가워요.</span>
-    </li>
-    <li>
-      <span>김철수</span>
-      :
-      (
-      <span>1</span>
-      )
-      <span>안녕하세요.</span>
-    </li>
-  </ul>
+  <script th:inline="javascript">
+    const chatRoom = [[${chatRoom}]];  // Thymeleaf 인라인 문법 수정
+    const socket = new SockJS("/ws");
+    const stompClient = Stomp.over(socket);  // 변수명은 camelCase로
+
+    function fetchPost(url, data) {
+      return fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(data), // 데이터를 JSON 문자열로 변환
+      }).then((response) => response.json());
+    }
+
+    function fetchGet(url, data) {
+      // 쿼리 파라미터 생성 (예: key1=value1&key2=value2)
+      let query = Object.keys(data)
+              .map((k) => encodeURIComponent(k) + "=" + encodeURIComponent(data[k]))
+              .join("&");
+      return fetch(url + "?" + query, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }).then((response) => response.json());
+    }
+
+    function Chat__writeMessage(form) {
+      // 작성자 이름 유효성 검사
+      form.authorName.value = form.authorName.value.trim();
+      if (form.authorName.value.length == 0) {
+        alert("작성자를 입력해주세요.");
+        form.authorName.focus();
+        return;
+      }
+
+      // 메시지 내용 유효성 검사
+      form.content.value = form.content.value.trim();
+      if (form.content.value.length == 0) {
+        form.content.focus();
+        return;
+      }
+
+      // 서버에 메시지 전송
+      fetchPost("/chat/room/writeMessage", {
+        chatRoomId: chatRoom.id,
+        writerName: form.authorName.value,
+        content: form.content.value,
+      }).then(console.log); // 응답 로그 출력
+
+      // 입력 필드 초기화 및 포커스 설정
+      form.content.value = "";
+      form.content.focus();
+    }
+
+    const Chat__elMessageUl = document.querySelector('.chat__message-ul');
+
+    function Chat__drawMessage(message) {
+      Chat__elMessageUl.insertAdjacentHTML(
+              "beforeend",  // afterBegin -> beforeend로 변경하여 아래에 추가
+              `<li>${message.chatMessage.writerName} : ${message.chatMessage.content}</li>`
+      );
+
+      // 스크롤을 최신 메시지 위치로
+      Chat__elMessageUl.scrollTop = Chat__elMessageUl.scrollHeight;
+    }
+
+    stompClient.connect({}, frame => {
+      console.log("Connected: " + frame);
+
+      stompClient.subscribe("/topic/chat/room/" + chatRoom.id, message => {
+        console.log("Received: " + message);
+        const messageData = JSON.parse(message.body);
+        Chat__drawMessage(messageData);
+      });
+    });
+  </script>
 </div>

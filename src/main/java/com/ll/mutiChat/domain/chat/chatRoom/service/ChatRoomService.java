@@ -1,8 +1,7 @@
-package com.ll.mutiChat.domain.chat.ChatRoom.service;
+package com.ll.mutiChat.domain.chat.chatRoom.service;
 
-import com.ll.mutiChat.domain.chat.ChatRoom.dto.ChatRoomDto;
-import com.ll.mutiChat.domain.chat.ChatRoom.entity.ChatRoom;
-import com.ll.mutiChat.domain.chat.ChatRoom.repository.ChatRoomRepository;
+import com.ll.mutiChat.domain.chat.chatRoom.entity.ChatRoom;
+import com.ll.mutiChat.domain.chat.chatRoom.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +18,7 @@ public class ChatRoomService {
 
     // 채팅방 생성
     public void makeRoom(String name) {
+        logger.info("채팅방 생성");
         chatRoomRepository.save(ChatRoom.builder()
                 .name(name)
                 .build());

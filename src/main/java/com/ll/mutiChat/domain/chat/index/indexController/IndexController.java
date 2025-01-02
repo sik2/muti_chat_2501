@@ -1,4 +1,4 @@
-package com.ll.mutiChat.domain.chat.indexController;
+package com.ll.mutiChat.domain.chat.index.indexController;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

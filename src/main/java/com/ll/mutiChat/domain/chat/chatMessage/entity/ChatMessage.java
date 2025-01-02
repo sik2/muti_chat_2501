@@ -1,6 +1,6 @@
-package com.ll.mutiChat.domain.chat.ChatMessage.entity;
+package com.ll.mutiChat.domain.chat.chatMessage.entity;
 
-import com.ll.mutiChat.domain.chat.ChatRoom.entity.ChatRoom;
+import com.ll.mutiChat.domain.chat.chatRoom.entity.ChatRoom;
 import com.ll.mutiChat.global.baseEntity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;

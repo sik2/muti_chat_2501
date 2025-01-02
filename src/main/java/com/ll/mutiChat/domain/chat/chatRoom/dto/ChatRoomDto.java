@@ -1,9 +1,6 @@
-package com.ll.mutiChat.domain.chat.ChatRoom.dto;
+package com.ll.mutiChat.domain.chat.chatRoom.dto;
 
-import com.ll.mutiChat.domain.chat.ChatRoom.entity.ChatRoom;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.ll.mutiChat.domain.chat.chatRoom.entity.ChatRoom;
 
 /**
  * packageName    : com.ll.mutiChat.domain.chat.ChatRoom.dto

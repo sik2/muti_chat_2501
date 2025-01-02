@@ -14,17 +14,10 @@ import org.springframework.web.bind.annotation.*;
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
 
-    @GetMapping("/{roomId}")
-    @ResponseBody
-    public String showRoom(@PathVariable long roomId, @RequestParam(defaultValue = "NoName") String writerName) {
-
-        return String.format("%d 번 채팅방 입니다. writer : %s", roomId, writerName);
-    }
-
     @GetMapping("/make")
     public String showMakeRoom(Model model) {
         model.addAttribute("chatRoomDto", new ChatRoomDto());
-        return "domain/chat/chatRoom/list";
+        return "domain/chat/chatRoom/make";
     }
 
     @PostMapping("/make")

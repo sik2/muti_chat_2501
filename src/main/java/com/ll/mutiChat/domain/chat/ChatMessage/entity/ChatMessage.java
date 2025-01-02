@@ -19,6 +19,7 @@ import static lombok.AccessLevel.PROTECTED;
 public class ChatMessage extends BaseEntity {
     @ManyToOne
     private ChatRoom chatRoom;
+    private long roomId;
     private String writerName;
     private String content;
 }

@@ -9,11 +9,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,6 +24,8 @@ import java.util.List;
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
     private final ChatMessageService chatMessageService;
+
+    private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
     // 채팅방 상세
     @GetMapping("/{roomId}")
@@ -96,5 +101,27 @@ public class ChatRoomController {
         List<ChatMessage> messages = chatMessageService.findByChatRoomIdAndIdAfter(roomId, afterId);
 
         return RsData.of("S-1", "%d개의 메시지를 가져왔습니다.".formatted(messages.size()), new GetMessagesAfterResponseBody(messages));
+    }
+
+    @GetMapping("/{roomId}/subscribe")
+    public SseEmitter subscribe(@PathVariable long roomId) {
+        SseEmitter emitter = new SseEmitter();
+
+        emitters.add(emitter);
+
+        emitter.onCompletion(() -> emitters.remove(emitter));
+        emitter.onTimeout(() -> emitters.remove(emitter));
+
+        return emitter;
+    }
+
+    private void sendNewMessageToClients(ChatMessage message) {
+        for (SseEmitter emitter : emitters) {
+            try {
+                emitter.send(message, MediaType.APPLICATION_JSON);
+            } catch (Exception e) {
+                emitters.remove(emitter);
+            }
+        }
     }
 }

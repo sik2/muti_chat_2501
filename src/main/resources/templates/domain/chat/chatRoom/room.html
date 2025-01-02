@@ -3,109 +3,124 @@
 <h1 th:text="|${roomId}번 채팅방|"></h1>
 
 <nav>
-  <a href="make">채팅방 생성</a>
-  <a href="list">채팅방 목록</a>
+    <a href="make">채팅방 생성</a>
+    <a href="list">채팅방 목록</a>
 </nav>
 
 <form onsubmit="submitWriteForm(this); return false;" method="POST">
-  <input autocomplete="off" type="text" name="writerName" placeholder="작성자 명">
-  <input autocomplete="off" type="text" name="content" placeholder="내용">
-  <input type="submit" value="작성">
+    <input autocomplete="off" type="text" name="writerName" placeholder="작성자 명">
+    <input autocomplete="off" type="text" name="content" placeholder="내용">
+    <input type="submit" value="작성">
 </form>
 
 <div>
-  <ul class="chat__messages">
-    <li th:each="chatMessage : ${room.chatMessages}">
-      <th:block th:text="${chatMessage.writerName}"></th:block>
-      :
-      (
-      <th:block th:text="${chatMessage.id}"></th:block>
-      )
-      <th:block th:text="${chatMessage.content}"></th:block>
-    </li>
-  </ul>
+    <ul class="chat__messages">
+        <li th:each="chatMessage : ${room.chatMessages}">
+            <th:block th:text="${chatMessage.writerName}"></th:block>
+            :
+            (
+            <th:block th:text="${chatMessage.id}"></th:block>
+            )
+            <th:block th:text="${chatMessage.content}"></th:block>
+        </li>
+    </ul>
 </div>
 
 <!--초기 변수 설정-->
 <script th:inline="javascript">
-  const roomId = /*[[${roomId}]]*/ 0;
-  let lastChatMessageId = /*[[${room.chatMessages.size > 0 ? room.chatMessages.first.id : 0}]]*/ 0;
+    const roomId = /*[[${roomId}]]*/ 0;
+    let lastChatMessageId = /*[[${room.chatMessages.size > 0 ? room.chatMessages.first.id : 0}]]*/ 0;
 </script>
 
 <script>
-  const chatMessagesEl = document.querySelector('.chat__messages');
+    const chatMessagesEl = document.querySelector('.chat__messages');
 
-  function submitWriteForm(form) {
-      form.writerName.value = form.writerName.value.trim();
+    function submitWriteForm(form) {
+        form.writerName.value = form.writerName.value.trim();
 
-      if ( form.writerName.value.length == 0 ) {
-          alert('작성자 명을 입력해주세요.');
-          form.writerName.focus();
-          return;
-      }
+        if ( form.writerName.value.length == 0 ) {
+            alert('작성자 명을 입력해주세요.');
+            form.writerName.focus();
+            return;
+        }
 
-      form.content.value = form.content.value.trim();
+        form.content.value = form.content.value.trim();
 
-      if ( form.content.value.length == 0 ) {
-          alert('내용을 입력해주세요.');
-          form.content.focus();
-          return;
-      }
+        if ( form.content.value.length == 0 ) {
+            alert('내용을 입력해주세요.');
+            form.content.focus();
+            return;
+        }
 
-      const action = `/chat/room/${roomId}/write`;
+        const action = `/chat/room/${roomId}/write`;
 
-      fetch(
-          action,
-          {
-              method: 'POST',
-              headers: {
-                  'accept': 'application/json',
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                  writerName: form.writerName.value,
-                  content: form.content.value,
-              }),
-          }
-      ).catch(error => alert(error));
+        fetch(
+            action,
+            {
+                method: 'POST',
+                headers: {
+                    'accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    writerName: form.writerName.value,
+                    content: form.content.value,
+                }),
+            }
+        ).catch(error => alert(error));
 
-      form.content.value = '';
-      form.content.focus();
-  }
+        form.content.value = '';
+        form.content.focus();
+    }
 
-  function loadMoreChatMessages() {
-      const action = `/chat/room/${roomId}/messagesAfter/${lastChatMessageId}`;
+    const eventSource = new EventSource(`/chat/room/${roomId}/subscribe`);
 
-      fetch(
-          action,
-          {
-              method: 'GET',
-              headers: {
-                  'accept': 'application/json'
-              }
-          }
-      )
-          .then(response => response.json())
-          .then(json => drawMoreChatMessages(json.data.messages))
-          .then(() => setTimeout(loadMoreChatMessages, 500))
-          .catch(error => alert(error));
-  }
+    eventSource.onmessage = function(event) {
+        const message = JSON.parse(event.data);
+        drawMoreChatMessage(message);
+    };
 
-  function drawMoreChatMessages(messages) {
-      messages.forEach((message) => {
-          drawMoreChatMessage(message);
-      });
-  }
+    function drawMoreChatMessage(message) {
+        const chatMessagesEl = document.querySelector('.chat__messages');
+        chatMessagesEl.insertAdjacentHTML(
+            "afterBegin",
+            `<li>${message.writerName} : ( ${message.id} ) ${message.content}</li>`
+        );
+    }
 
-  function drawMoreChatMessage(message) {
-      lastChatMessageId = message.id;
+    function loadMoreChatMessages() {
+        const action = `/chat/room/${roomId}/messagesAfter/${lastChatMessageId}`;
 
-      chatMessagesEl
-          .insertAdjacentHTML(
-              "afterBegin",
-              `<li>${message.writerName} : ( ${message.id} ) ${message.content}</li>`
-          );
-  }
+        fetch(
+            action,
+            {
+                method: 'GET',
+                headers: {
+                    'accept': 'application/json'
+                }
+            }
+        )
+            .then(response => response.json())
+            .then(json => drawMoreChatMessages(json.data.messages))
+            .then(() => setTimeout(loadMoreChatMessages, 500))
+            .catch(error => alert(error));
+    }
 
-  loadMoreChatMessages();
+    function drawMoreChatMessages(messages) {
+        messages.forEach((message) => {
+            drawMoreChatMessage(message);
+        });
+    }
+
+    function drawMoreChatMessage(message) {
+        lastChatMessageId = message.id;
+
+        chatMessagesEl
+            .insertAdjacentHTML(
+                "afterBegin",
+                `<li>${message.writerName} : ( ${message.id} ) ${message.content}</li>`
+            );
+    }
+
+    loadMoreChatMessages();
 </script>

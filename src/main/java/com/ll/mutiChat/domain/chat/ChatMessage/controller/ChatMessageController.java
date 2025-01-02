@@ -34,6 +34,6 @@ public class ChatMessageController {
 
         chatMessageService.saveMessage(roomId, chatMessageDto);
 
-        return "domain/chat/chatRoom/room/" + roomId;
+        return "redirect:/chat/room/" + roomId;
     }
 }

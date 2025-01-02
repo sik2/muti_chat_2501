@@ -1,4 +1,6 @@
-<h1>1번 채팅방</h1>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<h1 th:text="|${roomId}번 채팅방|"></h1>
 
 <nav>
   <a href="make">채팅방 생성</a>
@@ -13,29 +15,111 @@
 
 <div>
   <ul class="chat__messages">
-    <li>
-      <span>홍길동</span>
+    <li th:each="chatMessage : ${room.chatMessages}">
+      <th:block th:text="${chatMessage.writerName}"></th:block>
       :
       (
-      <span>3</span>
+      <th:block th:text="${chatMessage.id}"></th:block>
       )
-      <span>안녕하세요.</span>
-    </li>
-    <li>
-      <span>김영희</span>
-      :
-      (
-      <span>2</span>
-      )
-      <span>반가워요.</span>
-    </li>
-    <li>
-      <span>김철수</span>
-      :
-      (
-      <span>1</span>
-      )
-      <span>안녕하세요.</span>
+      <th:block th:text="${chatMessage.content}"></th:block>
     </li>
   </ul>
 </div>
+
+<script th:inline="javascript">
+  const roomId = [[${roomId}]] ;
+  let lastChatMessageId = [[${room.chatMessages.size > 0 ? room.chatMessages.last.id : 0}]];
+</script>
+
+<script>
+  const chatMessagesEl = document.querySelector('.chat__messages');
+
+  function submitWriteForm(form) {
+    form.writerName.value = form.writerName.value.trim();
+
+    if ( form.writerName.value.length == 0 ) {
+      alert('작성자 명을 입력해주세요.');
+      form.writerName.focus();
+      return;
+    }
+
+    form.content.value = form.content.value.trim();
+
+    if ( form.content.value.length == 0 ) {
+      alert('내용을 입력해주세요.');
+      form.content.focus();
+      return;
+    }
+
+    const action = `/chat/room/${roomId}/write`;
+
+    fetch(
+            action,
+            {
+              method: 'POST',
+              headers: {
+                'accept': 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                writerName: form.writerName.value,
+                content: form.content.value,
+              }),
+            }
+    ).catch(error => alert(error));
+
+    form.content.value = '';
+    form.content.focus();
+  }
+
+  function loadMoreChatMessages() {
+    const action = `/chat/room/${roomId}/messagesAfter/${lastChatMessageId}`;
+
+    fetch(
+            action,
+            {
+              method: 'GET',
+              headers: {
+                'accept': 'application/json'
+              }
+            }
+    )
+            .then(response => response.json())
+            .then(json => drawMoreChatMessages(json.data.messages))
+            .catch(error => alert(error));
+  }
+
+  function drawMoreChatMessages(messages) {
+    messages.forEach((message) => {
+      drawMoreChatMessage(message);
+    });
+  }
+
+  function drawMoreChatMessage(message) {
+    lastChatMessageId = message.id;
+
+    chatMessagesEl
+            .insertAdjacentHTML(
+                    "beforeend",
+                    `<li>${message.writerName} : ( ${message.id} ) ${message.content}</li>`
+            );
+  }
+
+  // const sse = new EventSource("/sse/connect");
+  //
+  // sse.addEventListener('chat__messageAdded',
+  //     e => loadMoreChatMessages()
+  // );
+
+  const socket = new SockJS("/ws"); //해당 엔드포인트를 통해 웹소켓 연결
+  const stompClient = Stomp.over(socket); //웹소켓을 보조하는 프로토콜로 stomp를 쓰겠다
+
+  stompClient.connect({}, function (frame) { //실제로 연결한다. 첫 인자는 헤더라고 한다. 두 번째 인자는 연결되었을 때 실행할 콜백인 것 같다
+    console.log("Connected: " + frame);
+    stompClient.subscribe(`/sub/chat/room/${roomId}/write`, function (data) {
+      console.log(data.body)
+      loadMoreChatMessages();
+    });
+  });
+
+</script>

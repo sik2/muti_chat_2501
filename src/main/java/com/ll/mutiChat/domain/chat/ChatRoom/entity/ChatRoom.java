@@ -21,6 +21,6 @@ import static lombok.AccessLevel.PROTECTED;
 public class ChatRoom extends BaseEntity {
     private String name;
 
-    @OneToMany
+    @OneToMany(mappedBy = "chatRoom")
     private List<ChatMessage> chatMessages;
 }

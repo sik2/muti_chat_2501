@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ import static lombok.AccessLevel.PROTECTED;
 @SuperBuilder
 @ToString(callSuper = true)
 public class ChatRoom extends BaseEntity {
+
     private String name;
 
     @OneToMany

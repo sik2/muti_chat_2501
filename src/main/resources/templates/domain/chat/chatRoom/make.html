@@ -4,9 +4,9 @@
   <a href="list">채팅방 목록</a>
 </nav>
 
-<form method="POST">
+<form method="POST" action="/chat/room/make">
   <div>
-    <input type="text" name="name" placeholder="이름" required>
+    <input type="text" name="name" id="roomName" placeholder="이름" required>
   </div>
   <div>
     <input type="submit" value="채팅방 생성">

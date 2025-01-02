@@ -4,23 +4,22 @@
     <a href="make">채팅방 생성</a>
 </nav>
 
-<ul>
-    <li>
-        <a href="#">
-            <span>1번</span>
-            <span>공지방</span>
-        </a>
-    </li>
-    <li>
-        <a href="#">
-            <span>2번</span>
-            <span>공부방</span>
-        </a>
-    </li>
-    <li>
-        <a href="#">
-            <span>3번</span>
-            <span>잡담방</span>
-        </a>
+<ul id="chatRoomList">
+    <li th:each="room : ${rooms}">
+        <a th:href="@{'/chat/room/' + ${room.id}}"><span th:text="${room.name}"></span></a>
     </li>
 </ul>
+
+<script>
+    // rooms 데이터를 JavaScript로 활용하려면 Thymeleaf를 사용하여 데이터 삽입
+    const rooms = /*[[${rooms}]]*/ []; // Thymeleaf에서 rooms 배열을 JavaScript로 삽입
+
+    console.log(rooms); // 데이터를 확인
+
+    // JavaScript로 추가적으로 동적인 작업이 필요할 경우 사용
+    rooms.forEach(room => {
+        const listItem = document.createElement("li");
+        listItem.innerHTML = `<a href="/chat/room/${room.id}">${room.name}</a>`;
+        document.getElementById("chatRoomList").appendChild(listItem);
+    });
+</script>

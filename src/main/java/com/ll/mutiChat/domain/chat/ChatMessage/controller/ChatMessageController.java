@@ -51,8 +51,8 @@ public class ChatMessageController {
 
              /*SSE방식은
              1. 서버와 클라이언트 별도로 미리 연결.(sse연결용 Controller @GetMapping(value = "/SseConnecting")를 사용하였음
-             2. 변경사항 발생시, 전체 emitter들에게 데이터 회신으로 이루어져 있는고로, 사용자가 입력=변경사항 발생시.
-             emitter로 연결된 모든 이들에게 데이터를 전송해야 함으로, crud에 넣는것이 좋다.
+             2. 변경사항 발생시, 전체 emitter들에게 데이터 회신으로 이루어져 있는고로, 변경발생시
+                emitter로 연결된 모든 이들에게 데이터를 전송해야 함으로, crud에 넣는것이 좋다.
              */
             sseEmitters.changedEvent("messageChanged");
 
@@ -73,7 +73,7 @@ public class ChatMessageController {
     @GetMapping("/{roomId}/messagesAfter/{afterId}")
     @ResponseBody
     public List<ChatMessage> readMessage(@PathVariable long roomId, @PathVariable long afterId, Model model) {
-        List<ChatMessage> messageList= chatMessageService.findByIdGreaterThan(afterId);
+        List<ChatMessage> messageList= chatMessageService.findByIdGreaterThan(roomId, afterId);
         return messageList;
     }
 

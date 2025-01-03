@@ -11,15 +11,20 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ChatMessageService {
+
     private final ChatMessageRepository chatMessageRepository;
 
     public void createMessage(ChatMessage chatMessage) {
         chatMessageRepository.save(chatMessage);
     }
 
-    public List<ChatMessage> findByIdGreaterThan(long id) {
-        return chatMessageRepository.findByIdGreaterThan(id);
+    public List<ChatMessage> findByIdGreaterThan(long roomId, long id) {
+        return chatMessageRepository.findByIdGreaterThanAndRoomId(roomId, id);
     }
+
+/*    public List<ChatMessage> findByIdGreaterThan(long id) {
+        return chatMessageRepository.findByIdGreaterThan(id);
+    }*/
 
     public void makeBasicMessageList(ChatRoom chatRoom1, String 사용자, String 내용) {
         ChatMessage chatMessage = ChatMessage.builder()

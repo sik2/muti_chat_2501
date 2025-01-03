@@ -19,8 +19,7 @@ public class ChatMessageController {
     private final ChatMessageService chatMessageService;
     private ChatMessageRepository chatMessageRepository;
 
-    //폴링방식 = 지속적인 request가 필요 = 화면에서 반복호출작업 필요
-    //아.. JPA가 만들어졌으니 그거 기반을 하라는 말씀이신가?
+    //jpa
     @GetMapping("/polling")
     public List<ChatMessage> polling(@RequestParam Long lastMessageId) {
         if (lastMessageId == null) {

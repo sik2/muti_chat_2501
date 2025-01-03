@@ -1,5 +1,6 @@
 package com.ll.mutiChat.domain.chat.ChatRoom.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ll.mutiChat.domain.chat.ChatMessage.entity.ChatMessage;
 import com.ll.mutiChat.global.baseEntity.BaseEntity;
 import jakarta.persistence.Entity;
@@ -18,9 +19,10 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 @SuperBuilder
 @ToString(callSuper = true)
+@JsonIgnoreProperties({"chatMessages"})
 public class ChatRoom extends BaseEntity {
     private String name;
 
-    @OneToMany
+    @OneToMany(mappedBy = "chatRoom")
     private List<ChatMessage> chatMessages;
 }

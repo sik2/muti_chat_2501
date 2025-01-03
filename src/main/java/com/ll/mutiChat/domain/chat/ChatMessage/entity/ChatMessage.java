@@ -1,5 +1,6 @@
 package com.ll.mutiChat.domain.chat.ChatMessage.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.ll.mutiChat.domain.chat.ChatRoom.entity.ChatRoom;
 import com.ll.mutiChat.global.baseEntity.BaseEntity;
 import jakarta.persistence.Entity;

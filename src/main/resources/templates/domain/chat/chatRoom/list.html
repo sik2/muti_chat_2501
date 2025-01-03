@@ -1,3 +1,4 @@
+<html xmlns:th="http://www.thymeleaf.org">
 <h1>채팅방 목록</h1>
 
 <nav>
@@ -7,8 +8,8 @@
 <ul>
     <li th:each="chatRoom : ${chatRooms}">
         <a th:href="${chatRoom.id}">
-            <span th:text="${chatRoom.id}"></span>
-            <span>[[${chatRoom.name}]]</span>
+            <span th:text="|${chatRoom.id}.|"></span>
+            <span th:text="${chatRoom.name}"></span>
         </a>
     </li>
 </ul>

@@ -1,116 +1,116 @@
-<h1 th:text="|${roomId}번 채팅방|"></h1>
-
-<nav>
-  <a href="make">채팅방 생성</a>
-  <a href="list">채팅방 목록</a>
-</nav>
-
-<form onsubmit="submitWriteForm(this); return false;" action="/chat/room/${room.id}/write" method="POST">
-  <input autocomplete="off" type="text" name="writerName" placeholder="작성자 명">
-  <input autocomplete="off" type="text" name="content" placeholder="내용">
-  <input type="submit" value="작성">
-</form>
-
-<div>
-  <ul class="chat__messages">
-    <li th:each="chatMessage : ${room.chatMessages}">
-      <th:block th:text="${chatMessage.writerName}"></th:block>
-      :
-      (
-      <th:block th:text="${chatMessage.id}"></th:block>
-      )
-      <th:block th:text="${chatMessage.content}"></th:block>
-    </li>
-  </ul>
+<!-- 채팅 컨테이너 -->
+<div class="chat">
+  <!-- 메시지 작성 폼 -->
+  <!-- 폼 제출 시 Chat__writeMessage 함수 호출, 기본 제출 동작 방지 -->
+  <form
+          class="chat__write-message"
+          onsubmit="Chat__writeMessage(this); return false;"
+  >
+    <input type="text" placeholder="작성자" name="authorName" />
+    <!-- 작성자 입력 필드 -->
+    <input type="text" placeholder="내용을 입력해주세요." name="content" />
+    <!-- 메시지 내용 입력 필드 -->
+    <input type="submit" value="작성" />
+    <!-- 제출 버튼 -->
+  </form>
+  <!-- 메시지 표시 영역 -->
+  <div class="chat__message-box">
+    <ul class="chat__message-ul"></ul>
+    <!-- 메시지들이 표시될 리스트 -->
+  </div>
 </div>
 
-<script th:inline="javascript">
-  const roomId = /*[[${roomId}]]*/ 0;
-  let lastChatMessageId = /*[[${room.chatMessages.size > 0 ? room.chatMessages.first.id : 0}]]*/ 0;
-</script>
-
 <script>
-  const chatMessagesEl = document.querySelector('.chat__messages');
+  // POST 요청을 보내는 유틸리티 함수
+  function fetchPost(url, data) {
+    return fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(data), // 데이터를 JSON 문자열로 변환
+    }).then((response) => response.json());
+  }
 
-  function submitWriteForm(form) {
-    form.writerName.value = form.writerName.value.trim();
+  // GET 요청을 보내는 유틸리티 함수
+  function fetchGet(url, data) {
+    // 쿼리 파라미터 생성 (예: key1=value1&key2=value2)
+    let query = Object.keys(data)
+            .map((k) => encodeURIComponent(k) + "=" + encodeURIComponent(data[k]))
+            .join("&");
+    return fetch(url + "?" + query, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    }).then((response) => response.json());
+  }
 
-    if (form.writerName.value.length == 0) {
-      alert('작성자 명을 입력해주세요.');
-      form.writerName.focus();
+  // 메시지 작성 처리 함수
+  function Chat__writeMessage(form) {
+    // 작성자 이름 유효성 검사
+    form.authorName.value = form.authorName.value.trim();
+    if (form.authorName.value.length == 0) {
+      alert("작성자를 입력해주세요.");
+      form.authorName.focus();
       return;
     }
 
+    // 메시지 내용 유효성 검사
     form.content.value = form.content.value.trim();
-
     if (form.content.value.length == 0) {
-      alert('내용을 입력해주세요.');
       form.content.focus();
       return;
     }
 
-    const action = form.action;
+    // 서버에 메시지 전송
+    fetchPost("/chat/writeMessage", {
+      authorName: form.authorName.value,
+      content: form.content.value,
+    }).then(console.log); // 응답 로그 출력
 
-    fetch(
-            action,
-            {
-              method: 'POST',
-              headers: {
-                'accept': 'application/json',
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                writerName: form.writerName.value,
-                content: form.content.value,
-              }),
-            }
-    )
-            .then(response => {
-              if (!response.ok) {
-                throw new Error('Network response was not ok');
-              }
-              return response.json();
-            })
-            .then(data => {
-              form.content.value = '';
-              form.content.focus();
-            })
-            .catch(error => alert(error));
+    // 입력 필드 초기화 및 포커스 설정
+    form.content.value = "";
+    form.content.focus();
   }
 
-  function loadMoreChatMessages() {
-    const action = `/chat/room/${roomId}/messagesAfter/${lastChatMessageId}`;
 
-    fetch(
-            action,
-            {
-              method: 'GET',
-              headers: {
-                'accept': 'application/json'
-              }
-            }
-    )
-            .then(response => response.json())
-            .then(json => drawMoreChatMessages(json.data.messages))
-            .then(() => setTimeout(loadMoreChatMessages, 500))
-            .catch(error => alert(error));
+  // 채팅 메세지 작성 끝
+  // 채팅 메세지들 읽기 시작
+  // 현재 클라이언트가 받은 메세지 번호를 입력해야 합니다.
+  // 그래야 메세지 요청시에 필요한 부분만 가져오게 됩니다.
+  let Chat__lastLoadedId = 0;
+  function Chat__loadMore() {
+    fetchGet("/chat/messages", {
+      fromId: Chat__lastLoadedId
+    })
+            .then(body => {
+              Chat__drawMessages(body.data.chatMessages);
+            });
   }
-
-  function drawMoreChatMessages(messages) {
+  const Chat__elMessageUl = document.querySelector('.chat__message-ul');
+  function Chat__drawMessages(messages) {
+    if (messages.length > 0) {
+      // 메세지를 그리기 전에 Chat__lastLoadedUuid 변수를 갱신합니다.
+      Chat__lastLoadedId = messages[messages.length - 1].id;
+    }
     messages.forEach((message) => {
-      drawMoreChatMessage(message);
+      Chat__elMessageUl
+              .insertAdjacentHTML(
+                      "afterBegin",
+                      `<li>${message.authorName} : ${message.content}</li>`
+              );
     });
   }
+  Chat__loadMore();
 
-  function drawMoreChatMessage(message) {
-    lastChatMessageId = message.id;
+  const sse = new EventSource("/sse/connect");
 
-    chatMessagesEl
-            .insertAdjacentHTML(
-                    "afterBegin",
-                    `<li>${message.writerName} : ( ${message.id} ) ${message.content}</li>`
-            );
-  }
+  sse.addEventListener('chat__messageAdded', e => {
+    Chat__loadMore();
+  });
 
-  loadMoreChatMessages();
+  // 채팅 메시지들 읽기 끝
 </script>

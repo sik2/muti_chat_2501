@@ -19,7 +19,8 @@ public class ChatMessageService {
     }
 
     public List<ChatMessage> findByIdGreaterThan(long roomId, long id) {
-        return chatMessageRepository.findByIdGreaterThanAndRoomId(roomId, id);
+        //return chatMessageRepository.findByIdGreaterThanAndRoomId(roomId, id);
+        return chatMessageRepository.findByRoomIdAndIdGreaterThan(roomId, id);
     }
 
 /*    public List<ChatMessage> findByIdGreaterThan(long id) {

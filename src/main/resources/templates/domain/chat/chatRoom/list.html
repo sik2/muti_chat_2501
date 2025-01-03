@@ -1,3 +1,4 @@
+<html xmlns:th="http://www.thymeleaf.org">
 <h1>채팅방 목록</h1>
 
 <nav>
@@ -5,22 +6,10 @@
 </nav>
 
 <ul>
-    <li>
-        <a href="#">
-            <span>1번</span>
-            <span>공지방</span>
-        </a>
-    </li>
-    <li>
-        <a href="#">
-            <span>2번</span>
-            <span>공부방</span>
-        </a>
-    </li>
-    <li>
-        <a href="#">
-            <span>3번</span>
-            <span>잡담방</span>
+    <li th:each="chatRoom : ${chatRooms}">
+        <a th:href="${chatRoom.id}">
+            <span th:text="|${chatRoom.id}.|"></span>
+            <span th:text="${chatRoom.name}"></span>
         </a>
     </li>
 </ul>

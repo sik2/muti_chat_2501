@@ -28,7 +28,7 @@
 
 <script th:inline="javascript">
   const roomId = [[${roomId}]] ;
-  let lastChatMessageId = [[${room.chatMessages.size > 0 ? room.chatMessages.last.id : 0}]];
+  //let lastChatMessageId = [[${room.chatMessages.size > 0 ? room.chatMessages.last.id : 0}]];
 </script>
 
 <script>
@@ -72,22 +72,22 @@
     form.content.focus();
   }
 
-  function loadMoreChatMessages() {
-    const action = `/chat/room/${roomId}/messagesAfter/${lastChatMessageId}`;
-
-    fetch(
-            action,
-            {
-              method: 'GET',
-              headers: {
-                'accept': 'application/json'
-              }
-            }
-    )
-            .then(response => response.json())
-            .then(json => drawMoreChatMessages(json.data.messages))
-            .catch(error => alert(error));
-  }
+  // function loadMoreChatMessages() {
+  //   const action = `/chat/room/${roomId}/messagesAfter/${lastChatMessageId}`;
+  //
+  //   fetch(
+  //           action,
+  //           {
+  //             method: 'GET',
+  //             headers: {
+  //               'accept': 'application/json'
+  //             }
+  //           }
+  //   )
+  //           .then(response => response.json())
+  //           .then(json => drawMoreChatMessages(json.data.messages))
+  //           .catch(error => alert(error));
+  // }
 
   function drawMoreChatMessages(messages) {
     messages.forEach((message) => {
@@ -96,7 +96,7 @@
   }
 
   function drawMoreChatMessage(message) {
-    lastChatMessageId = message.id;
+    // lastChatMessageId = message.id;
 
     chatMessagesEl
             .insertAdjacentHTML(
@@ -117,8 +117,9 @@
   stompClient.connect({}, function (frame) { //실제로 연결한다. 첫 인자는 헤더라고 한다. 두 번째 인자는 연결되었을 때 실행할 콜백인 것 같다
     console.log("Connected: " + frame);
     stompClient.subscribe(`/sub/chat/room/${roomId}/write`, function (data) { //해당 엔드포인트를 구독한다. 두 번째 인자는 해당 엔드포인트로 메시지가 오면 실행할 콜백이다
-      console.log(data.body)
-      loadMoreChatMessages();
+      const jsonData = JSON.parse(data.body);
+      console.log(jsonData);
+      drawMoreChatMessage(jsonData);
     });
   });
 

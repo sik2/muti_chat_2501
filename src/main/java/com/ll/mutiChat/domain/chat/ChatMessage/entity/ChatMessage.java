@@ -19,7 +19,6 @@ import static lombok.AccessLevel.PROTECTED;
 @ToString(callSuper = true)
 public class ChatMessage extends BaseEntity {
     @ManyToOne
-    @JsonBackReference
     private ChatRoom chatRoom;
     private String writerName;
     private String content;

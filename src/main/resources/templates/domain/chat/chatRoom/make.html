@@ -1,14 +1,57 @@
-<h1>채팅방 생성</h1>
+<html xmlns:th="http://www.thymeleaf.org">
 
+<script>
+  function submitForm(form) {
+
+          event.preventDefault()
+          var name = form.name.value.trim();
+
+          if (name == "") {
+              alert("채팅방 이름을 입력해주세요.");
+              return false;
+          }
+
+          const ChatRoom = {
+                name: name
+          };
+
+          // AJAX 요청 보내기
+          fetch('/chat/room/make', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify(ChatRoom)
+          })
+          //response는 서버에서 보낸 http 응답 전체를 의미한다.
+          //따라서 response => response.json()같은 가공과정이 없으면,
+          //responseBody에 담긴 데이터는 스트림이라 읽지도 못하고, 쓸데없는 header정보만 보게된다.
+          //따라서 response.json이나, response.text 같은 return 에 맞는 가공과정을 거쳐야,
+          //responseBody에 담긴 데이터를 읽을 수 있다.
+          .then(response => response.json())
+          .then(data => {
+              if (true) {
+                  alert('채팅방이 생성되었습니다!');
+                  window.location.href = '/chat/room/list';  // 채팅방 목록 페이지로 리디렉션
+              } else {
+                  alert('채팅방 생성에 실패했습니다. 관리자에게 문의 바랍니다.');
+              }
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              alert('서버 요청에 실패했습니다.');
+          });
+      }
+</script>
+<h1>채팅방 생성</h1>
 <nav>
   <a href="list">채팅방 목록</a>
 </nav>
 
-<form method="POST">
-  <div>
-    <input type="text" name="name" placeholder="이름" required>
-  </div>
-  <div>
-    <input type="submit" value="채팅방 생성">
-  </div>
+<form method="POST" onsubmit="submitForm(this)">
+    <div><input type="text" name="name" placeholder="이름" required></div>
+    <div><input type="submit" value="채팅방 생성"></div>
 </form>
+</html>
+
+
+
+

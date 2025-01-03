@@ -15,6 +15,7 @@
         <a th:href="@{'/chat/room/' + ${chatRoom.id}}">
             <span th:text="${chatRoom.id}">1번</span>
             <span th:text="${chatRoom.name}">공지방</span>
+            <!--<span>[[${chatRoom.name}]]</span>-->
         </a>
     </li>
 </ul>

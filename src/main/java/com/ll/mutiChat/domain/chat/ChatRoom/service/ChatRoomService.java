@@ -28,4 +28,14 @@ public class ChatRoomService {
         }
     }
 
+    //서버 환경에 따라 사전에 DB에 데이터를 삽입하는 코드
+    public ChatRoom make(String room) {
+
+        ChatRoom chatRoom = ChatRoom.builder()
+                .name(room)
+                .build();
+
+        chatRoomRepository.save(chatRoom);
+        return chatRoom;
+    }
 }

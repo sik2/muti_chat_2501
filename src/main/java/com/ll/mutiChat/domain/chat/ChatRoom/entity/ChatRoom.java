@@ -28,4 +28,13 @@ public class ChatRoom extends BaseEntity {
     //외래키를 설정하는 컬럼은 인위적으로 바꿀수는 있지만, 기본적으론 id로 설정된다.
     @OneToMany
     private List<ChatMessage> chatMessages;
+
+    public void writeMessage(String writerName, String content) {
+        ChatMessage chatMessage = ChatMessage.builder()
+                .writerName(writerName)
+                .content(content)
+                .chatRoom(this)
+                .build();
+        chatMessages.add(chatMessage);
+    }
 }

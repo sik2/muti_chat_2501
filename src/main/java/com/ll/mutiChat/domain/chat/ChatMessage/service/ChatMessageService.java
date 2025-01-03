@@ -2,6 +2,7 @@ package com.ll.mutiChat.domain.chat.ChatMessage.service;
 
 import com.ll.mutiChat.domain.chat.ChatMessage.entity.ChatMessage;
 import com.ll.mutiChat.domain.chat.ChatMessage.repository.ChatMessageRepository;
+import com.ll.mutiChat.domain.chat.ChatRoom.entity.ChatRoom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,4 +21,12 @@ public class ChatMessageService {
         return chatMessageRepository.findByIdGreaterThan(id);
     }
 
+    public void makeBasicMessageList(ChatRoom chatRoom1, String 사용자, String 내용) {
+        ChatMessage chatMessage = ChatMessage.builder()
+                .chatRoom(chatRoom1)
+                .writerName(사용자)
+                .content(내용)
+                .build();
+        chatMessageRepository.save(chatMessage);
+    }
 }

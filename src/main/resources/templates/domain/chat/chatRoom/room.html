@@ -1,13 +1,19 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+
 <script>
 
   var afterId = 0;
   window.onload = function(){
-    readMessageListByPolling();
+     readMessage();
   }
 
-  function readMessageListByPolling(){
+  function readMessage(){
 
     const roomId = document.getElementById('roomId').textContent.trim();
 
@@ -16,11 +22,11 @@
     })
     .then(response => response.json())
     .then(messages => {
-      drawMessageByPolling(messages);
+      drawMessage(messages);
     });
   }
 
-  function drawMessageByPolling(messages){
+  function drawMessage(messages){
 
     const chatMessageUI = document.querySelector('.chat__messages');
 
@@ -35,8 +41,27 @@
                       `<li>${message.writerName} : ${message.content}</li>`
               );
     });
-    setTimeout(readMessageListByPolling, 500); // 0.5초마다 새로운 메세지를 가져옵니다.
+     //setTimeout(readMessage, 500); // 폴링방식. 0.5초마다 get요청 호출
   }
+
+ //SSE 방식
+ // const sse = new EventSource("/chat/room/SseConnecting");
+ // sse.addEventListener('messageChanged', e => {
+ //   readMessage();
+ // });
+
+
+    //웹 소켓 방식
+    const socket = new SockJS("/ws");
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function (frame) {
+      //stompClient.subscribe(`/wsConnect/chat/room/${roomId}/write`, function (data) {
+        stompClient.subscribe(`/wsConnect/write`, function (data) {
+        console.log("data", data);
+        readMessage();
+      });
+    });
 
 //입력시
 function submitWriteForm(form){

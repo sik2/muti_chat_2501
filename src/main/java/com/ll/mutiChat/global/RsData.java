@@ -1,4 +1,4 @@
-package com.ll.mutiChat.global.rsData;
+package com.ll.mutiChat.global;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

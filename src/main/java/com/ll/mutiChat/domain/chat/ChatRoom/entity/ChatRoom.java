@@ -2,6 +2,7 @@ package com.ll.mutiChat.domain.chat.ChatRoom.entity;
 
 import com.ll.mutiChat.domain.chat.ChatMessage.entity.ChatMessage;
 import com.ll.mutiChat.global.baseEntity.BaseEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import lombok.*;
@@ -21,6 +22,10 @@ import static lombok.AccessLevel.PROTECTED;
 public class ChatRoom extends BaseEntity {
     private String name;
 
-    @OneToMany
+    @OneToMany(cascade= CascadeType.ALL)
     private List<ChatMessage> chatMessages;
+
+    public void addChatMessage(ChatMessage chatMessage){
+        this.chatMessages.add(chatMessage);
+    }
 }

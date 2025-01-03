@@ -1,26 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<tbody>
 <h1>채팅방 목록</h1>
 
 <nav>
     <a href="make">채팅방 생성</a>
 </nav>
 
-<ul>
-    <li>
-        <a href="#">
-            <span>1번</span>
-            <span>공지방</span>
-        </a>
-    </li>
-    <li>
-        <a href="#">
-            <span>2번</span>
-            <span>공부방</span>
-        </a>
-    </li>
-    <li>
-        <a href="#">
-            <span>3번</span>
-            <span>잡담방</span>
-        </a>
-    </li>
-</ul>
+<tr th:each="item : ${chatRooms}">
+    <a th:href="@{'/chat/room/' + ${item.id}}">
+
+    <td th:text="${item.id}">인덱스</td>
+        <td th:text="${item.name}">채팅방 이름</td></a>
+</tr>
+
+</tbody>
+<script th:inline="javascript">
+    //fetchget으로 데이터 가져오고 뿌리기
+function bringList(){
+    fetch('/chat/room/roomlist')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            data.forEach(chatRoom => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${chatRoom.id} 인덱스</td>
+                    <td>${chatRoom.name} 제목</td>
+                `;
+                document.querySelector('tbody').appendChild(tr);
+            });
+        });
+}
+    //bringList();
+</script>
+</html>

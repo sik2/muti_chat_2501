@@ -1,10 +1,10 @@
-package com.ll.mutiChat;
+package com.ll.multiChat;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MutiChatApplicationTests {
+class MultiChatApplicationTests {
 
 	@Test
 	void contextLoads() {

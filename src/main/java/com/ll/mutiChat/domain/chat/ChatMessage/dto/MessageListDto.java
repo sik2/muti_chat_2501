@@ -1,4 +1,4 @@
-package com.ll.mutiChat.domain.chat.ChatMessage;
+package com.ll.mutiChat.domain.chat.ChatMessage.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

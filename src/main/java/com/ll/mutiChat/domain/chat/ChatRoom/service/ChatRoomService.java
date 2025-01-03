@@ -20,13 +20,13 @@ public class ChatRoomService {
         return chatRoomRepository.findById(roomId).orElseThrow();
     }
 
-    public Long createChatRoom(String name) {
+    public ChatRoom createChatRoom(String name) {
         ChatRoom chatRoom = ChatRoom.builder()
                 .name(name)
                 .build();
 
         chatRoomRepository.save(chatRoom);
 
-        return chatRoom.getId();
+        return chatRoom;
     }
 }

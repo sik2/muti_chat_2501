@@ -12,6 +12,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     @Override
     //웹소켓의 핸드셰이크를 위한 엔드포인트
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+        //ws라는 endpoint를 생성하고 SockJS를 사용하도록 설정
         registry.addEndpoint("ws")
                 .withSockJS();
     }

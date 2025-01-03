@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
 
-    public void write(ChatRoom chatRoom, String writerName, String content) {
+    public ChatMessage write(ChatRoom chatRoom, String writerName, String content) {
         ChatMessage chatMessage = ChatMessage.builder()
                 .chatRoom(chatRoom)
                 .writerName(writerName)
@@ -19,5 +19,7 @@ public class ChatMessageService {
                 .build();
 
         chatMessageRepository.save(chatMessage);
+
+        return chatMessage;
     }
 }

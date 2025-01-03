@@ -5,6 +5,7 @@ import com.ll.mutiChat.domain.chat.ChatMessage.service.ChatMessageService;
 import com.ll.mutiChat.domain.chat.ChatRoom.entity.ChatRoom;
 import com.ll.mutiChat.domain.chat.ChatRoom.service.ChatRoomService;
 import com.ll.mutiChat.global.rsData.RsData;
+import com.ll.mutiChat.global.sse.component.SseEmitters;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +20,7 @@ import java.util.Map;
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
     private final ChatMessageService chatMessageService;
+    private final SseEmitters sseEmitters;
 
     @GetMapping("/list")
     public String listRoom(Model model) {
@@ -54,6 +56,9 @@ public class ChatRoomController {
         String writerName = payload.get("writerName");
         String content = payload.get("content");
         chatMessageService.writeMessage(roomId, writerName, content);
+
+        sseEmitters.noti("chat__messageAdded");
+
         return RsData.of("S-1", "success");
     }
 

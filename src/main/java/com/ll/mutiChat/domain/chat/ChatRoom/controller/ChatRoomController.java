@@ -95,5 +95,5 @@ public class ChatRoomController {
         List<ChatMessage> messages = chatMessageService.findByChatRoomIdAndIdAfter(roomId, afterId);
 
         return RsData.of("S-1", "%d개의 메시지를 가져왔습니다.".formatted(messages.size()), new GetMessagesAfterResponseBody(messages));
-    } //메세지 확인후 채팅방이동
+    }
 }

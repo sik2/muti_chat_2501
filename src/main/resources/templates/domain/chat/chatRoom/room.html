@@ -1,3 +1,6 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
 <!-- 채팅 컨테이너 -->
 <div class="chat">
   <!-- 메시지 작성 폼 -->
@@ -105,11 +108,15 @@
   }
   Chat__loadMore();
 
-  const sse = new EventSource("/sse/connect");
+  const socket = new SockJS("/ws");
+  const StompClient = Stomp.over(socket);
 
-  sse.addEventListener('chat__messageAdded', e => {
-    Chat__loadMore();
+  StompClient.connect({}, (frame) => {
+    console.log("Connected: " + frame);
+    StompClient.subscribe("/topic/chat/writeMessage", (data) => {
+      console.log(data.body);
+      Chat__loadMore();
+    });
   });
-
   // 채팅 메시지들 읽기 끝
 </script>

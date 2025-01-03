@@ -37,37 +37,30 @@ public class ChatRoomController {
     @PostMapping("/make")
     @ResponseBody
     public boolean makeRoom(@RequestBody ChatRoomDTO ChatRoomDTO) {
-        //ChatRoom은 ACCESS = PROTETED가 걸려있었다.
-        //외부에서 직접 생성자 호출하는 대신, 빌더 패턴이나 팩토리 메서드(?) 를 사용하는 목적이라는 듯 하다.
-        //따라서 기존의 new 방식을 주석처리하고 빌드패턴을 사용하여 작성하였다.
-        //ChatRoom chatRoom = new ChatRoom();
-        boolean successYn = true;
+        /*ChatRoom은 ACCESS = PROTETED가 걸려있었다.
+          외부에서 직접 생성자 호출하는 대신, 빌더 패턴이나 팩토리 메서드(?) 를 사용하는 목적이라는 듯 하다.
+          따라서 기존의 new 방식을 주석처리하고 빌드패턴을 사용하여 작성하였다.
+          ChatRoom chatRoom = new ChatRoom();
+        */
+        boolean result = true;
         ChatRoom chatRoom = ChatRoom.builder()
                             .name(ChatRoomDTO.getName())
                             .build();
         try {
             chatRoomService.save(chatRoom);
         } catch (Exception e) {
-            successYn = false;
+            result = false;
             log.error("채팅방 생성 실패", e);
             throw new RuntimeException(e);
         }
-        return successYn;
+        return result;
     }
 
-    //채팅방 생성
-/*    @PostMapping("/make")
-    public boolean makeRoom(@RequestParam ChatRoom ChatRoom) {
-        return   chatRoomService.save(ChatRoom);
-    }*/
-
+    //채팅방 입장화면 이동
     @GetMapping("/{roomId}")
     public String showRoom(@PathVariable long roomId, @RequestParam(defaultValue = "NoName") String writerName, Model model) {
         model.addAttribute("roomId", roomId);
         model.addAttribute("writerName", writerName);
-         return "domain/chat/chatRoom/make";
+         return "domain/chat/chatRoom/room";
     }
-
-
-
 }

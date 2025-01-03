@@ -1,4 +1,88 @@
-<h1>1번 채팅방</h1>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<script>
+
+  var afterId = 0;
+  window.onload = function(){
+    readMessageListByPolling();
+  }
+
+  function readMessageListByPolling(){
+
+    const roomId = document.getElementById('roomId').textContent.trim();
+
+    fetch(`/chat/room/${roomId}/messagesAfter/${afterId}`, {
+          method: 'GET'
+    })
+    .then(response => response.json())
+    .then(messages => {
+      drawMessageByPolling(messages);
+    });
+  }
+
+  function drawMessageByPolling(messages){
+
+    const chatMessageUI = document.querySelector('.chat__messages');
+
+    if (messages.length > 0) {
+      afterId = messages[messages.length - 1].id;
+    }
+
+     messages.forEach((message) => {
+      chatMessageUI
+              .insertAdjacentHTML(
+                      "afterBegin",
+                      `<li>${message.writerName} : ${message.content}</li>`
+              );
+    });
+    setTimeout(readMessageListByPolling, 500); // 0.5초마다 새로운 메세지를 가져옵니다.
+  }
+
+//입력시
+function submitWriteForm(form){
+  const roomId = document.getElementById('roomId').textContent.trim();
+  event.preventDefault();
+  var writerName = form.writerName.value.trim();
+  var content = form.content.value.trim();
+
+  if(writerName == ""){
+    alert("작성자 명을 입력해주세요.");
+    form.writerName.focus();
+    return false;
+  }else if(content == ""){
+    alert("내용을 입력해주세요.");
+    form.content.focus();
+    return false;
+  }
+
+  const chatMessage = {
+        writerName: writerName,
+        content   : content
+  };
+
+  fetch(`/chat/room/${roomId}/write`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify(chatMessage)
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (true) {
+            console.log("채팅입력 성공!", chatMessage);
+            form.writerName.value = "";
+            form.content.value = "";
+      } else {
+          alert('채팅방 생성에 실패했습니다. 관리자에게 문의 바랍니다.');
+      }
+  })
+  .catch(error => {
+      console.error('Error:', error);
+      alert('서버 요청에 실패했습니다.');
+  });
+}
+</script>
+
+<h1><span id="roomId" th:text="${roomId}"></span>번 채팅방</h1>
 
 <nav>
   <a href="make">채팅방 생성</a>
@@ -13,29 +97,9 @@
 
 <div>
   <ul class="chat__messages">
-    <li>
-      <span>홍길동</span>
-      :
-      (
-      <span>3</span>
-      )
-      <span>안녕하세요.</span>
-    </li>
-    <li>
-      <span>김영희</span>
-      :
-      (
-      <span>2</span>
-      )
-      <span>반가워요.</span>
-    </li>
-    <li>
-      <span>김철수</span>
-      :
-      (
-      <span>1</span>
-      )
-      <span>안녕하세요.</span>
+    <li th:each="chatMessage : ${chatMessages}">
+      <span th:text="${chatMessage.writerName}"></span>
+      <span th:text="${chatMessage.content}"></span>
     </li>
   </ul>
 </div>

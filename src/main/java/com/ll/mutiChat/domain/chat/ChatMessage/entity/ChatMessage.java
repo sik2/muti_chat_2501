@@ -17,8 +17,11 @@ import static lombok.AccessLevel.PROTECTED;
 @SuperBuilder
 @ToString(callSuper = true)
 public class ChatMessage extends BaseEntity {
+
+    //ManyToOne은 OneToMany의 기본키값인 id에 의존한다는 의미이다.
     @ManyToOne
     private ChatRoom chatRoom;
+
     private String writerName;
     private String content;
 }
